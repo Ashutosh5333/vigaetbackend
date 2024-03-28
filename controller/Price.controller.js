@@ -1,4 +1,4 @@
-
+const mongoose = require("mongoose")
 const Organization = require('../model/organization.model');
 const Item = require('../model/item.model');
 const Pricing = require('../model/pricing.model');
@@ -18,6 +18,20 @@ const Getorgnizationitem = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+//   get item list 
+
+  
+const Getitemlist = async (req, res) => {
+    try {
+        const item = await Item.find()
+       
+        res.status(201).json(item);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 
 
@@ -82,31 +96,48 @@ const organizationcreate =  async (req, res) => {
 
      const calculateprice  = async (req, res) => {
     try {
-        const { zone, organization_id, total_distance, item_type } = req.body;
-              console.log("bodyyyy",req.body)
+        const { zone, organization_id, total_distance, item_type,item_id } = req.body;
+            //   console.log("bodyyyy",req.body)
+
+
         // Find organization
         const organization = await Organization.findOne({ _id: organization_id });
         if (!organization) {
             return res.status(404).json({ message: 'Organization not found' });
         }
-
+        // console.log("organization",organization)
+        
         // Find item
-        const item = await Item.findOne({ type: item_type });
+        
+        const item = await Item.findOne({_id:item_id });
+        // console.log("itemmm",item)
         if (!item) {
-            return res.status(404).json({ message: 'Item not found' });
+            return res.status(404).json({ message: 'items not found' });
         }
 
-        // Find pricing
+        let itemType = 'perishable'
+        if (item) {
+            itemType = item.type;
+        } else {
+            // console.log("Item not found, defaulting to non-perishable");
+            return res.status(404).json({ message: ' non-perishable items' });
+        }
+         if(item.km_price<1.5){
+            return res.status(404).json({ message: ' non-perishable items' });
+         }
+        // console.log("itemmm2",item)
+    
+    //  
         const pricing = await Pricing.findOne({
-            organization_id: organization_id,
-            item_id: item._id,
-            zone: zone
+            organization_id:organization_id,
+            item_id:item_id
         });
+
+        // console.log("pricning",pricing)
 
         if (!pricing) {
             return res.status(404).json({ message: 'Pricing not found' });
         }
-
         const priceCalculator = new PriceCalculator(pricing);
         const totalPrice = priceCalculator.calculatePrice(total_distance);
 
@@ -117,4 +148,4 @@ const organizationcreate =  async (req, res) => {
 }
 
 
- module.exports ={priceitem,pricepost,calculateprice,organizationcreate , Getorgnizationitem}
+ module.exports ={priceitem,pricepost,calculateprice,organizationcreate , Getorgnizationitem,Getitemlist}

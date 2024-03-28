@@ -1,20 +1,36 @@
 class PriceCalculator {
     constructor(pricing) {
-        this.pricing = pricing;
+        this.baseDistance = pricing.base_distance_in_km;
+        this.basePrice = pricing.fix_price;
+        this.kmPrice = pricing.km_price;
+        this.itemType = pricing.item_id.type;  
     }
 
-    calculatePrice(totalDistance) {
-        let totalPrice = this.pricing.fix_price * 100; 
-        
-        if (totalDistance > this.pricing.base_distance_in_km) {
-            const extraDistance = totalDistance - this.pricing.base_distance_in_km;
-            const extraPrice = extraDistance * (this.pricing.km_price * 100); 
-            totalPrice += extraPrice;
+    calculatePrice(distance) {
+        let totalPrice = this.basePrice;
+        const additionalDistance = distance - this.baseDistance;
+
+        if (additionalDistance > 0) {
+            totalPrice += additionalDistance * this.getKmPrice();
+        } else if (distance > 0 && distance <= 1.5) {
+            totalPrice += distance * this.getNonPerishableKmPrice();
         }
 
-        return totalPrice / 100; 
-        
+        return totalPrice;
+    }
+
+    getKmPrice() {
+        if (this.itemType === 'perishable') {
+            return 1.5;
+        } else {
+            return 1;
+        }
+    }
+
+    getNonPerishableKmPrice() {
+        return 1; 
     }
 }
+
 
 module.exports = PriceCalculator;
