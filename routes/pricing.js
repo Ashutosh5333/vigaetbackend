@@ -14,7 +14,7 @@ const { priceitem, organizationcreate, pricepost, calculateprice, Getorgnization
    PriceRouter.post("/pricing",pricepost)
    PriceRouter.post("/calculate-price",calculateprice)
 
-   PriceRouter.get("/getorganization",Getorgnizationitem)
+   PriceRouter.get("/getorg",Getorgnizationitem)
    PriceRouter.get("/getitems",Getitemlist)
 
 
