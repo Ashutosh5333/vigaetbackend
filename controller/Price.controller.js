@@ -42,6 +42,16 @@ const priceitem = CatchError(async (req, res) => {
   }
 });
 
+const Getallpricingdetail = CatchError(async (req, res) => {
+  try {
+    const item = await Pricing.find();
+  
+    res.status(201).json(item);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Create organization
 
 const organizationcreate = CatchError(async (req, res) => {
@@ -195,4 +205,5 @@ module.exports = {
   Getitemlist,
   getPricing,
   updatePricing,
+  Getallpricingdetail
 };

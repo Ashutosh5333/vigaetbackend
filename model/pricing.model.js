@@ -7,7 +7,6 @@ const pricingSchema = new mongoose.Schema({
         trim: true,
         minlength: [3, 'Organization ID should be at least 3 characters long'],
         maxlength: [50, 'Organization ID should not exceed 50 characters']
-   
     },
     item_id: {
         type: mongoose.Schema.Types.ObjectId,

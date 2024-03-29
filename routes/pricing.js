@@ -13,6 +13,7 @@ const {
   Getitemlist,
   getPricing,
   updatePricing,
+  Getallpricingdetail,
 } = require("../controller/Price.controller");
 
 PriceRouter.post("/create", organizationcreate);
@@ -21,6 +22,8 @@ PriceRouter.post("/item", priceitem);
 PriceRouter.post("/pricing", pricepost);
 PriceRouter.post("/calculate-price", calculateprice);
 
+// Getallpricingdetail
+PriceRouter.get("/allpricing", Getallpricingdetail);
 PriceRouter.get("/pricing/:organization_id/:item_id", getPricing);
 
 PriceRouter.patch("/pricing/:organization_id/:item_id", updatePricing);
