@@ -29,8 +29,6 @@ const Getitemlist = CatchError(async (req, res) => {
   }
 });
 
- 
-
 const priceitem = CatchError(async (req, res) => {
   try {
     const { type, description } = req.body;
@@ -94,25 +92,19 @@ const pricepost = CatchError(async (req, res) => {
   }
 });
 
-
-
 const calculateprice = CatchError(async (req, res) => {
   try {
     const { zone, organization_id, total_distance, item_type, item_id } =
       req.body;
-    //   console.log("bodyyyy",req.body)
 
     // Find organization
     const organization = await Organization.findOne({ _id: organization_id });
     if (!organization) {
       return res.status(404).json({ message: "Organization not found" });
     }
-    // console.log("organization",organization)
-
-    // Find item
 
     const item = await Item.findOne({ _id: item_id });
-    // console.log("itemmm",item)
+
     if (!item) {
       return res.status(404).json({ message: "items not found" });
     }
@@ -126,9 +118,10 @@ const calculateprice = CatchError(async (req, res) => {
     }
 
     if (pricing.km_price < 1.5) {
-      return res.status(404).json({ message: " non-perishable items" });
+      return res.status(404).json({
+        message: "non-perishable items  km_price should be greater then 1.4 ",
+      });
     }
-    console.log("pricning", pricing);
 
     const priceCalculator = new PriceCalculator(pricing);
     const totalPrice = priceCalculator.calculatePrice(total_distance);
@@ -146,8 +139,7 @@ const getPricing = CatchError(async (req, res) => {
     const pricing = await Pricing.findOne({
       organization_id: organization_id,
       item_id: item_id,
-    })
-    .populate('item_id');
+    }).populate("item_id");
 
     if (!pricing) {
       return res.status(404).json({ message: "Pricing not found" });
@@ -158,7 +150,6 @@ const getPricing = CatchError(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
 
 const updatePricing = CatchError(async (req, res) => {
   try {
@@ -195,9 +186,6 @@ const updatePricing = CatchError(async (req, res) => {
   }
 });
 
-
-
-
 module.exports = {
   priceitem,
   pricepost,
@@ -206,5 +194,5 @@ module.exports = {
   Getorgnizationitem,
   Getitemlist,
   getPricing,
-  updatePricing
+  updatePricing,
 };
