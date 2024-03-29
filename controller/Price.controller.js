@@ -94,6 +94,8 @@ const pricepost = CatchError(async (req, res) => {
   }
 });
 
+
+
 const calculateprice = CatchError(async (req, res) => {
   try {
     const { zone, organization_id, total_distance, item_type, item_id } =
@@ -137,6 +139,65 @@ const calculateprice = CatchError(async (req, res) => {
   }
 });
 
+const getPricing = CatchError(async (req, res) => {
+  try {
+    const { organization_id, item_id } = req.params;
+
+    const pricing = await Pricing.findOne({
+      organization_id: organization_id,
+      item_id: item_id,
+    })
+    .populate('item_id');
+
+    if (!pricing) {
+      return res.status(404).json({ message: "Pricing not found" });
+    }
+
+    res.status(200).json(pricing);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+const updatePricing = CatchError(async (req, res) => {
+  try {
+    const { organization_id, item_id } = req.params;
+    const { zone, base_distance_in_km, km_price, fix_price } = req.body;
+
+    let pricing = await Pricing.findOne({
+      organization_id: organization_id,
+      item_id: item_id,
+    });
+
+    if (!pricing) {
+      return res.status(404).json({ message: "Pricing not found" });
+    }
+
+    if (zone) {
+      pricing.zone = zone;
+    }
+    if (base_distance_in_km) {
+      pricing.base_distance_in_km = base_distance_in_km;
+    }
+    if (km_price) {
+      pricing.km_price = km_price;
+    }
+    if (fix_price) {
+      pricing.fix_price = fix_price;
+    }
+
+    await pricing.save();
+
+    res.status(200).json(pricing);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
 module.exports = {
   priceitem,
   pricepost,
@@ -144,4 +205,6 @@ module.exports = {
   organizationcreate,
   Getorgnizationitem,
   Getitemlist,
+  getPricing,
+  updatePricing
 };

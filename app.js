@@ -11,7 +11,7 @@ app.use(
   })
 );
 
- app.use(PriceRouter)
+ app.use("/api/v1" ,PriceRouter)
 
 
 app.get("/", (req, res) => {
